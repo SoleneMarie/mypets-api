@@ -34,18 +34,19 @@ export class PersonService {
    * @returns {Promise<Person[]>} Liste complète des personnes.
    * @throws {InternalServerErrorException} En cas d'erreur inattendue.
    */
-  async findAll(start = 0, limit = 10): Promise<Person[]> {
+  async findAll(
+    start: number,
+    limit: number,
+  ): Promise<{ persons: Person[]; totalCount: number }> {
     try {
-      const query = this.personRepository
+      const [persons, totalCount] = await this.personRepository
         .createQueryBuilder('person')
-        .leftJoinAndSelect('person.animals', 'animals');
+        .leftJoinAndSelect('person.animals', 'animals')
+        .skip(Number(start))
+        .take(Number(limit))
+        .getManyAndCount(); // Récupérer les résultats paginés + le total sans pagination
 
-      // Appliquer la pagination
-      query.skip(start).take(limit);
-
-      // Exécuter la requête
-      const persons = await query.getMany();
-      return persons;
+      return { persons, totalCount };
     } catch (error) {
       console.error('FINDALL PAGINATED ERROR:', error);
       throw new InternalServerErrorException(

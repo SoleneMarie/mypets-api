@@ -8,6 +8,7 @@ import { Animal } from './animal.entity';
 
 import { CreateAnimalInput } from './dto/create-animal.input';
 import { UpdateAnimalInput } from './dto/update-animal.input';
+import { PaginatedAnimals } from './dto/paginated-animals.dto';
 import { MostCommonSpecies } from './models/most-common-species.model';
 import { HeaviestAnimal } from './models/heaviest-animal.model';
 
@@ -18,10 +19,10 @@ export class AnimalResolver {
   /**
    * Récupère tous les animaux.
    */
-  @Query(() => [Animal])
-  findAllAnimals(
-    @Args('start', { type: () => Int, nullable: true }) start: number,
-    @Args('limit', { type: () => Int, nullable: true }) limit: number,
+  @Query(() => PaginatedAnimals)
+  paginatedAnimals(
+    @Args('start', { type: () => Int, nullable: true }) start?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
     @Args('species', { type: () => String, nullable: true }) species?: string,
   ) {
     return this.animalService.findAll(start, limit, species);

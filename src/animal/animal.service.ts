@@ -32,7 +32,11 @@ export class AnimalService {
    * @returns {Promise<Animal[]>} Liste complète des animaux.
    * @throws {InternalServerErrorException} En cas d'erreur inattendue.
    */
-  async findAll(start, limit, species?: string): Promise<Animal[]> {
+  async findAll(
+    start?: number,
+    limit?: number,
+    species?: string,
+  ): Promise<{ animals: Animal[]; totalCount: number }> {
     try {
       // VERSION JS CLASSIQUE
       // let animals = await this.animalRepository.find({ relations: ['owner'] });
@@ -51,20 +55,18 @@ export class AnimalService {
         .createQueryBuilder('animal')
         .leftJoinAndSelect('animal.owner', 'owner');
       if (species) {
-        //On ajoute une clause "where" si l'espèce est précisée
-        query.where('LOWER(animal.species) = LOWER(:species)', { species });
+        query.where('LOWER(animal.species) = :species', {
+          species: species.toLowerCase(),
+        }); // :species => indique à typeORM que je vais lui fournir une variable juste après
       }
-      if (typeof start === 'number' && typeof limit === 'number') {
-        //Ajout de la pagination en SQL
-        query.skip(start).take(limit);
-      }
-      //Exécution de la requête SQL construite
-      const animals = await query.getMany();
-      return animals;
+      query.skip(Number(start)).take(Number(limit));
+
+      const [animals, totalCount] = await query.getManyAndCount();
+      return { animals, totalCount };
     } catch (error) {
-      console.error('FINDALL ERROR :', error);
+      console.error('FINDALL PAGINATED ERROR :', error);
       throw new InternalServerErrorException(
-        'Erreur lors de la récupération des animaux',
+        'Erreur lors de la récupération paginée des animaux',
       );
     }
   }

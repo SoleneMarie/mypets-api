@@ -29,7 +29,7 @@ export class Person {
   @Column()
   phoneNumber: string;
 
-  @Field(() => Animal)
+  @Field(() => [Animal])
   @OneToMany(() => Animal, (animal) => animal.owner)
   // Relation OneToMany : une personne peut avoir plusieurs animaux.
   // Relation bidirectionnelle : (chaque entité connaît l'autre)

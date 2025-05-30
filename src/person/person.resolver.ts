@@ -8,6 +8,7 @@ import { Person } from './person.entity';
 
 import { CreatePersonInput } from './dto/create-person.input';
 import { UpdatePersonInput } from './dto/update-person.input';
+import { PaginatedPersons } from './dto/paginated-persons.dto';
 import { TopOwner } from './models/top-owner.model';
 import { HeaviestGroup } from './models/heaviest-group.model';
 
@@ -18,9 +19,12 @@ export class PersonResolver {
   /**
    * Récupère toutes les personnes.
    */
-  @Query(() => [Person])
-  persons(): Promise<Person[]> {
-    return this.personService.findAll();
+  @Query(() => PaginatedPersons)
+  paginatedPersons(
+    @Args('start', { type: () => Int, nullable: true }) start?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ): Promise<PaginatedPersons> {
+    return this.personService.findAll(start ?? 0, limit ?? 12);
   }
 
   /**
