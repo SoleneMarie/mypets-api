@@ -25,6 +25,12 @@ import { Animal } from './animal/animal.entity';
       database: process.env.DB_NAME,
       entities: [Person, Animal], //tables à utiliser avec TypeORM
       synchronize: true, //type ORM va créer automatiquement les tables à partir de mes entités(ok pour local)
+      ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
     }),
     PersonModule,
     AnimalModule,
