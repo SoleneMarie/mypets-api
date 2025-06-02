@@ -8,6 +8,6 @@ async function bootstrap() {
     origin: 'http://localhost:3001', // 👈 ton front
     credentials: true,
   });
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(parseInt(process.env.PORT || '3000', 10));
 }
 bootstrap();
