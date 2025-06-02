@@ -1,98 +1,165 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🐾 MyPets - Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend de l’application **MyPets**.  
+Développé avec **NestJS**, **GraphQL**, **TypeORM** et **MySQL**, ce backend gère les entités `Animal` et `Person` ainsi que plusieurs fonctionnalités métier (traduction, statistiques, pagination...).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## ⚙️ Technologies utilisées
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- [NestJS](https://nestjs.com/) - Framework backend Node.js
+- [GraphQL](https://graphql.org/) - API query language
+- [TypeORM](https://typeorm.io/) - ORM pour TypeScript
+- [MySQL](https://www.mysql.com/) - Base de données relationnelle
+- [MyMemory API](https://mymemory.translated.net/) - Service de traduction gratuit
 
-## Project setup
+---
+
+## 🚀 Lancer le projet en local
+
+### 1. Cloner le dépôt
 
 ```bash
-$ npm install
+git clone https://github.com/SoleneMarie/mypets-api.git
+cd mypets-api
 ```
 
-## Compile and run the project
+### 2. Installer les dépendances
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+### 3. Configuration de l'environnement local
+
+Créer un fichier .env à la racine en se basant sur .env.example.
+Ces variables sont destinées à configurer **la connexion à la base de données MySQL locale** :
+
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=your_database_user
+DB_PASS=your_database_password
+DB_NAME=your_database_name
+```
+
+### 4. Démarrer le serveur
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run start:dev
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 🧠 Fonctionnalités principales
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- 🔁 CRUD complet sur les entités `Animal` et `Person`
+- 🔍 Recherches spécifiques :
+  - Animaux les plus vieux
+  - Animaux les plus lourds
+  - Espèce la plus représentée
+  - Propriétaire ayant le plus d'animaux
+  - Propriétaire ayant les animaux les plus lourds
+  - Propriétaire ayant le plus d'une espèce en particulier
+- 🌐 Traduction automatique de certains champs (espèce, race, couleur) via l’API **MyMemory**
+- 🔗 Relations `OneToMany` / `ManyToOne` entre `Person` et `Animal`
+- 📊 Resolvers GraphQL pour toutes les fonctionnalités
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+---
+
+## 📁 Structure du projet
+
+```
+/src
+  /animal
+    /dto # Data Transfer Objects, types attendus en entrée des requêtes
+    /models # Types attendus en sortie des requêtes
+    animal.entity.ts
+    animal.module.ts
+    animal.service.ts
+    animal.resolver.ts
+
+  /person # Logique métier des personnes
+    /dto # Data Transfer Objects, types attendus en entrée des requêtes
+    /models # Types attendus en sortie des requêtes
+    person.entity.ts
+    person.module.ts
+    person.service.ts
+    person.resolver.ts
+
+  /translation # Helper de traduction (MyMemory)
+
+  app.module.ts # Module principal
+  main.ts # Point d'entrée de l'application
+
+.env
+.env.example
+
+data-SQL.txt #data à insérer en base de données pour tester
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 🗃️ Modèles de données
 
-Check out a few resources that may come in handy when working with NestJS:
+### 🐶 `Animal`
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```ts
+{
+  id: number;
+  name: string;
+  dateOfBirth: Date;
+  species: string;
+  breed: string;
+  color: string;
+  weight: number;
+  owner: Person;
+}
+```
 
-## Support
+### 👤 `Person`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```ts
+{
+  id: number;
+  lastName: string;
+  firstName: string;
+  email: string;
+  phoneNumber: string;
+  animals: Animal[];
+}
+```
 
-## Stay in touch
+## Exemple de requête GraphQL
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```graphql
+query {
+  findAnimalWithOwner(id: 1) {
+    id
+    name
+    species
+    specieTranslated
+    owner {
+      firstName
+      lastName
+    }
+  }
+}
+```
 
-## License
+---
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### 🔗 Frontend associé
+
+Cette API est utilisée par une application front-end développée en Next.js :
+
+👉 [Dépôt GitHub – mypets-front](https://github.com/SoleneMarie/mypets-front)
+
+Elle consomme les données via GraphQL et propose une interface utilisateur pour consulter les animaux, leurs propriétaires, et visualiser des statistiques.
+
+---
+
+## 👩‍💻 Auteur
+
+Projet réalisé dans le cadre d’un exercice technique.  
+Codé avec ❤️ par **Solène**.
