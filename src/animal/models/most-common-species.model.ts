@@ -7,4 +7,7 @@ export class MostCommonSpecies {
 
   @Field(() => Int)
   count: number;
+
+  @Field()
+  specieTranslated: string;
 }

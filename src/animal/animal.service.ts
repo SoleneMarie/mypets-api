@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 
 import { Animal } from './animal.entity';
 import { Person } from 'src/person/person.entity';
+import { TranslationHelper } from 'src/translation/translation.helper';
 
 import { CreateAnimalInput } from './dto/create-animal.input';
 import { UpdateAnimalInput } from './dto/update-animal.input';
@@ -17,6 +18,12 @@ import {
   NotFoundException,
   InternalServerErrorException,
 } from '@nestjs/common';
+
+type TranslatedAnimal = Animal & {
+  breedTranslated: string;
+  colorTranslated: string;
+  specieTranslated: string;
+};
 
 @Injectable()
 export class AnimalService {
@@ -97,11 +104,12 @@ export class AnimalService {
   /**
    * Récupère un animal avec les informations de son propriétaire.
    * @param {number} id - Identifiant de l'animal.
-   * @returns {Promise<Animal>} L'animal trouvé avec la relation owner.
+   * @returns {Promise<TranslatedAnimal>} L'animal trouvé avec la relation owner + des traductions de certains champs
+   * Traduction avec Mymemory
    * @throws {NotFoundException} Si l'animal n'existe pas.
    * @throws {InternalServerErrorException} En cas d'erreur inattendue.
    */
-  async findOneWithOwner(id: number): Promise<Animal> {
+  async findOneWithOwner(id: number): Promise<TranslatedAnimal> {
     try {
       const animal = await this.animalRepository.findOne({
         where: { id },
@@ -110,7 +118,14 @@ export class AnimalService {
       if (!animal) {
         throw new NotFoundException(`Animal avec l'id ${id} non trouvé`);
       }
-      return animal;
+      return {
+        ...animal,
+        breedTranslated: await TranslationHelper.translate(animal.breed),
+        colorTranslated: await TranslationHelper.translate(
+          animal.color.toLowerCase(),
+        ),
+        specieTranslated: await TranslationHelper.translate(animal.species),
+      };
     } catch (error) {
       console.error('FINDONEWITHOWNER ERROR :', error);
       if (error instanceof NotFoundException) throw error;
@@ -243,7 +258,8 @@ export class AnimalService {
 
   /**
    * Trouve l’espèce la plus représentée dans la base.
-   * @returns {Promise<MostCommonSpecies[] | null>} Tableau contenant l'espèce la plus représentée, et son nombre de représentants
+   * @returns {Promise<MostCommonSpecies[] | null>} Tableau contenant l'espèce la plus représentée et son nombre de représentants
+   * Traduction avec Mymemory
    * @throws {InternalServerErrorException} En cas d’erreur inattendue.
    */
   async findMostCommonSpecies(): Promise<MostCommonSpecies[] | null> {
@@ -259,9 +275,19 @@ export class AnimalService {
       }
       const sorted = Object.entries(speciesCount).sort((a, b) => b[1] - a[1]);
       const topCount = sorted[0][1];
-      return sorted
+
+      const mostCommonSpecies = sorted
         .filter(([_, count]) => count === topCount)
         .map(([species, count]) => ({ species, count }));
+      const result: MostCommonSpecies[] = await Promise.all(
+        mostCommonSpecies.map(async ({ species, count }) => ({
+          species,
+          count,
+          specieTranslated: await TranslationHelper.translate(species),
+        })),
+      );
+
+      return result;
     } catch (error) {
       console.error('FINDMOSTCOMMONSPECIES ERROR :', error);
       throw new InternalServerErrorException(

@@ -8,7 +8,9 @@ import { Animal } from './animal.entity';
 
 import { CreateAnimalInput } from './dto/create-animal.input';
 import { UpdateAnimalInput } from './dto/update-animal.input';
-import { PaginatedAnimals } from './dto/paginated-animals.dto';
+import { PaginatedAnimals } from './models/paginated-animals.model';
+import { TranslatedAnimal } from './models/translated-animal.model';
+
 import { MostCommonSpecies } from './models/most-common-species.model';
 import { HeaviestAnimal } from './models/heaviest-animal.model';
 
@@ -39,7 +41,7 @@ export class AnimalResolver {
   /**
    * Récupère un animal avec son propriétaire.
    */
-  @Query(() => Animal)
+  @Query(() => TranslatedAnimal)
   findAnimalWithOwner(@Args('id', { type: () => Int }) id: number) {
     return this.animalService.findOneWithOwner(id);
   }

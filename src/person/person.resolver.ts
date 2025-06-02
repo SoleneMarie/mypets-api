@@ -8,7 +8,7 @@ import { Person } from './person.entity';
 
 import { CreatePersonInput } from './dto/create-person.input';
 import { UpdatePersonInput } from './dto/update-person.input';
-import { PaginatedPersons } from './dto/paginated-persons.dto';
+import { PaginatedPersons } from './models/paginated-persons.model';
 import { TopOwner } from './models/top-owner.model';
 import { HeaviestGroup } from './models/heaviest-group.model';
 
